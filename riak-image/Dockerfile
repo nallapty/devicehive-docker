@@ -6,8 +6,9 @@ ENV DH_VERSION="2.1.0-SNAPSHOT"
 ENV MAVEN_VERSION="3.3.3"
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh curl && \
-    mkdir -p /opt/devicehive
+    apk add --no-cache bash git openssh curl
+
+RUN mkdir -p /opt/devicehive
 
 RUN cd /usr/share \
  && wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz -O - | tar xzf - \
@@ -16,6 +17,7 @@ RUN cd /usr/share \
 
 ENV MAVEN_HOME /usr/share/maven
 
+# download devicehive and build .jar
 RUN git clone -b development https://github.com/devicehive/devicehive-java-server.git /opt/devicehive && \
     cd /opt/devicehive && \
     mvn clean package -Pbooted-riak,undertow,!booted-rdbms -DskipTests && \
